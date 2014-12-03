@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>??Title??</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="http://localhost:8001/js/lib/d3-3.4.13.js"></script>
+        <link rel="stylesheet" href="http://localhost:8001/css/lib/normalize-2.1.2.css">
+        <style media="screen" type="text/css">
+          .bar{
+            height: 10px;
+            background-color: blue;
+            border-bottom: 1px solid white;
+          }
+        </style>
+    </head>
+    <body>
+        <ul>
+            <li></li>
+        </ul>
+        <script>
+            var data = [10, 30, 60];
+            var update = d3.select('ul').selectAll('li')
+                .data(data)
+                .attr('class', 'bar')
+                .style('width', function(d){ return d + '%'; })
+                // there is only one <li> in DOM, so second and third data (30 and 60)
+                // has no element to bind
+
+            console.log('update[0]: ', update[0]);
+                        // [<li class="bar" style=width: 10%;"></li>, undefined × 2i ]
+
+            debugger;
+            var enter = update.enter()
+            console.log('enter[0]: ', enter[0] );
+                        // enter[0]:  [  1: Object
+                        //                  __data__: 30
+                        //             , 2: Object
+                        //                  __data__: 60
+            debugger;
+            var append = enter.append('li')
+            console.log('append[0]: ', append[0] );
+                        // append[0]:  [  1: null
+                        //              , 2: li
+                        //              , 3: li
+
+                // by calling enter() you can append element of your wish
+                // In this eg, two li will be created to bind date 30 and 60
+
+            debugger;
+            append.style('width', function(d){ return d + '%'; })
+                  .attr('class', 'bar');
+
+        </script>
+
+    </body>
+</html>
