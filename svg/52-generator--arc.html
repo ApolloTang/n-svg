@@ -17,24 +17,17 @@
 <body>
 <script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
 <script>
-var interpolateMode;
-interpolateMode= 'step';
-interpolateMode= 'bundle';
-interpolateMode= 'monotone';
-interpolateMode= 'cardinal';
-interpolateMode= 'cardinal-closed';
-var lineGenerator = d3.svg.line().interpolate(interpolateMode)
-    .x(function(d) { return d[0]; })
-    .y(function(d) { return d[1]; });
+var arc = d3.svg.arc()
+  .innerRadius(100).outerRadius(150)
+  .startAngle(0).endAngle(Math.PI )
 
-// the line data
-    var lineData = [[154, 14], [35, 172], [251, 127], [31, 58], [157, 205], [154, 14]];
+    // 0 is 12 oclock
+    // pi = 6 oclock
 
-// create `<svg>` and inner `<path>` element
-
-    d3.select('body').append('svg')
-    // use the generator and line data to create the `d` attribute for our path.
-    .append('path').datum(lineData).attr('d', lineGenerator);
+d3.select('body').append('svg')
+    .append('path')
+    .attr('d', arc)
+    .attr('transform', 'translate(200, 200)')  // translate(x,y)
 
 </script>
 </body>
