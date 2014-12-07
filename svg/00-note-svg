@@ -40,4 +40,19 @@ Here is few example for the differences:
                                      return a.zIndex - b.zIndex;
                                  });
 
+    styling text element
+    --------------------
+
+
+SVG group
+=========
+Use <g> tag group SVG elements.  Transformations such as:
+
+    positioning,
+    scaling,
+    rotating
+
+that are applied to the group element will also be applied to
+each of the child elements.
+
 
