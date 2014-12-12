@@ -1,0 +1,58 @@
+SVG Basics
+==========
+
+- The <svg> element is simply a DOM element, it behaves like a <div>
+  element.
+- Like a <div> element, it will take as much room as it possibly
+  unless we specify the dimensions.
+
+svg coordiante:
+    (0,0) = top left corner
+    x value move the coordinate right.
+    y value move the coordinate down.
+
+Styling svg element
+===================
+
+svg styling works just like html styling, you connect css with
+class and id, or place style directly using the style attribute.
+Dispite of the similarity, svg has its own set of styling properties.
+Styling properties that work on html does not necessary work on svg.
+Here is few example for the differences:
+
+    html                      svg closet equivalent
+
+    background-color    <>    fill
+    border-color        <>    stroke
+    border-width        <>    stroke-width
+
+    transform           <>    no css equivalent, need to use transform attribute
+
+    z-index             <>    does not apply, you have to remove and re-add
+                              the element so that the order in which you add
+                              your svg elements is the same as the
+                              visual depth order that you want.
+
+                              d3 selection come with helper method just
+                              for this purpose:
+
+                                 d3.selectAll('circles').sort(function(a, b){
+                                     return a.zIndex - b.zIndex;
+                                 });
+
+    styling text element
+    --------------------
+
+
+SVG group
+=========
+Use <g> tag group SVG elements.  Transformations such as:
+
+    positioning,
+    scaling,
+    rotating
+
+that are applied to the group element will also be applied to
+each of the child elements.
+
+
