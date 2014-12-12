@@ -54,6 +54,7 @@
 
             debugger;
             var append = enter.append('li')
+            console.log('append: ', append );
             console.log('append[0]: ', append[0] );
                         // append[0]:  [  1: null
                         //              , 2: li
@@ -61,6 +62,8 @@
 
                 // by calling enter() you can append element of your wish
                 // In this eg, two li will be created to bind date 30 and 60
+                // note that the first element of append[0] is null because data
+                // has already bind to the dom before enter() was called.
 
             debugger;
             append.style('width', function(d){ return d + '%'; })
