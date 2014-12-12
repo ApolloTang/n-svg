@@ -26,19 +26,32 @@
                 .data(data)
                 .attr('class', 'bar')
                 .style('width', function(d){ return d + '%'; })
-                // there is only one <li> in DOM, so second and third data (30 and 60)
-                // has no element to bind
 
-            console.log('update[0]: ', update[0]);
-                        // [<li class="bar" style=width: 10%;"></li>, undefined × 2i ]
+            // Note that D3 selection is not an real array, it is only an array like object
+            console.log('update: ', update);
+            console.log('update.length: ', update.length);
+            console.log('Object.prototype.toString(update): ', Object.prototype.toString(update)) // [Object Object]
 
             debugger;
+            // there is only one <li> in DOM, so second and third data (30 and 60)
+            // has no element to bind
+            console.log('update[0].length: ', update[0].length);
+            for (i=0; i<update[0].length; i++) {
+                console.log("update[0]["+i+"]: ", update[0][i]); // [<li class="bar" style=width: 10%;"></li>, undefined × 2i ]
+            }
+
+            debugger;
+            // after enter() is called on the selection an array like object is return,
+            // you can find data that are not bind to dom in the first element of this return array like object.
             var enter = update.enter()
-            console.log('enter[0]: ', enter[0] );
+            console.log('enter: ', enter);
+            console.log('enter[0]: ', enter);
                         // enter[0]:  [  1: Object
                         //                  __data__: 30
                         //             , 2: Object
                         //                  __data__: 60
+
+
             debugger;
             var append = enter.append('li')
             console.log('append[0]: ', append[0] );
