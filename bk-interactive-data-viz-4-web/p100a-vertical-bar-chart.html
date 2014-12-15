@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>??Title??</title>
+<title>d3 bar chart</title>
 <script src="http://localhost:8001/js/lib/d3-3.4.13.js"></script>
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,14 +27,14 @@ var dataset = [    5, 10, 13, 19, 21
                 , 11, 12, 15, 20, 18
                 , 11, 12, 15, 20, 18
                 , 11, 12, 15, 20, 18
-                , 11, 12, 15, 20, 18
                 , 17, 16, 18, 23, 25
-                , 20, 21, 12, 23, 34 ];
+                , 20, 21, 12, 23, 24 ];
 
 var w = 500;
 var h = 100;
 var barPadding = 1;
-
+var columnWidth = w/dataset.length
+var barWidth = columnWidth - barPadding;
 var svg = d3.select("body").append("svg").attr("width", w).attr("height", h).attr("style", "background-color:#4ee");
 
 svg.selectAll("rect")
@@ -42,21 +42,27 @@ svg.selectAll("rect")
 .enter()
 .append("rect")
 .attr({
-      "x"     : function(d,i){ return i * w/dataset.length; }
-    , "y"     : function(d,i){ return h - d*4 }
-    , "width" : w/dataset.length -  barPadding
-    , "height": function(d,i){ return d*4 }
+      "x"     : function(d,i){ return i * columnWidth; }
+    , "y"     : function(d,i){ return h - d*3 }
+    , "width" : barWidth
+    , "height": function(d,i){ return d*3 }
     , "fill"  : function(d,i){return "rgb(100,0,"+ (d*10)+")"}
 });
-    // d3.select("body").selectAll("div")
-    // .data(dataset)
-    // .enter()
-    // .append("div")
-    // .attr("class", "bar")
-    // .style("height", function(d) {
-    //     var barHeight = d * 5;
-    //     return barHeight + "px";
-    // });
+
+svg.selectAll("text")
+.data(dataset)
+.enter()
+.append("text")
+.text(function(d,i){return d})
+.attr({
+      "x" : function(d, i){return i*columnWidth + barWidth/2;}
+    , "y" : function(d, i) {return h - d*3 + 7}
+    , "font-size": "7px"
+    , "font-familly": "sans-serif"
+    , "fill" : "#fff"
+    , "text-anchor" : "middle"
+})
+
 </script>
 </body>
 </html>
