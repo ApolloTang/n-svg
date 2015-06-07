@@ -36,6 +36,7 @@ svg {
     cursor: url('cursor.png'), default;
     cursor: none;
     fill: #ddd;
+    border: 1px solid red;
 }
 #screenWelcome text {
     font-size: 20px;
