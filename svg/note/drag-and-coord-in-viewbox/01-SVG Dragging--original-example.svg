@@ -4,11 +4,11 @@
 <!--
     Testing Dragging of SVG Entities
     Copyright(c) 2005, Jeff Schiller
-    
+
     - works in IE+ASV
     - works in Firefox 1.5
     - does NOT work in Opera 9 TP1
-    
+
 -->
 <title>SVG Dragging</title>
 <desc>This example shows how it is possible to enable dragging of objects within SVG.  The one thing it does not address is the z-level (in a typical windowing environment, clicking on an object would bring it to the top z-level), since this was not important for my demonstration I left it out.
@@ -24,12 +24,12 @@ The example shows four objects, a circle, a rectangle, and two arbitrary shapes.
         str.sort();
         alert(obj + ":" + str.join(' '));
     }
-    
+
     var draggingElement = null;
     var nMouseOffsetX = 0;
     var nMouseOffsetY = 0;
-    
-    function mouseDown(evt) { 
+
+    function mouseDown(evt) {
         var target = evt.currentTarget;
         draggingElement = target;
 
@@ -37,7 +37,7 @@ The example shows four objects, a circle, a rectangle, and two arbitrary shapes.
             var p = document.documentElement.createSVGPoint();
             p.x = evt.clientX;
             p.y = evt.clientY;
-        
+
             var m = getScreenCTM(document.documentElement);
 
             p = p.matrixTransform(m.inverse());
@@ -46,32 +46,32 @@ The example shows four objects, a circle, a rectangle, and two arbitrary shapes.
 //            displayRawText("mouse offset=" + nMouseOffsetX + "," + nMouseOffsetY);
         }
     }
-    function mouseUp(evt) { 
+    function mouseUp(evt) {
         draggingElement = null;
         nMouseOffsetX = 0;
         nMouseOffsetY = 0;
     }
-    function mouseMove(evt) { 
+    function mouseMove(evt) {
         var p = document.documentElement.createSVGPoint();
         p.x = evt.clientX;
         p.y = evt.clientY;
-        
+
         var m = getScreenCTM(document.documentElement);
 
         p = p.matrixTransform(m.inverse());
         p.x -= nMouseOffsetX;
         p.y -= nMouseOffsetY;
-        
+
         if(draggingElement) {
             draggingElement.setAttribute("dragx", p.x);
             draggingElement.setAttribute("dragy", p.y);
             draggingElement.setAttribute("transform", "translate(" + p.x + "," + p.y + ")");
         }
-        
+
         displayCoords(p.x, p.y, "(svg user)");
 //        displayRawText("mouse offset=" + nMouseOffsetX + "," + nMouseOffsetY);
     }
-    
+
     function displayCoords(x,y,extra) {
         var xNode = document.getElementById("xpos");
         var yNode = document.getElementById("ypos");
@@ -80,14 +80,14 @@ The example shows four objects, a circle, a rectangle, and two arbitrary shapes.
             yNode.firstChild.nodeValue = parseInt(y) + extra;
         }
     }
-    
+
     function displayRawText(text) {
         var textNode = document.getElementById("raw");
         if(textNode) {
             textNode.firstChild.nodeValue = text;
         }
     }
-    
+
     function init() {
         var ball = document.getElementById("ball");
         var square = document.getElementById("square");
@@ -101,17 +101,17 @@ The example shows four objects, a circle, a rectangle, and two arbitrary shapes.
         }
         displayRawText("Drag stuff around");
     }
-    
+
     function displayMatrix(matrix) {
         displayRawText(matrix.a + ", " + matrix.b + ", " + matrix.c + ", "
                         + matrix.d + ", " + matrix.e + ", " + matrix.f);
     }
-    
+
     // Following is from Holger Will since ASV3 and O9 do not support getScreenTCM()
     // See http://groups.yahoo.com/group/svg-developers/message/50789
     function getScreenCTM(doc){
         if(doc.getScreenCTM) { return doc.getScreenCTM(); }
-        
+
         var root=doc
         var sCTM= root.createSVGMatrix()
 
@@ -136,7 +136,7 @@ The example shows four objects, a circle, a rectangle, and two arbitrary shapes.
         h=root.getAttribute("height")
         if (h==null || h=="") h=innerHeight
 
-        // Jeff Schiller:  Modified to account for percentages - I'm not 
+        // Jeff Schiller:  Modified to account for percentages - I'm not
         // absolutely certain this is correct but it works for 100%/100%
         if(w.substr(w.length-1, 1) == "%") {
             w = (parseFloat(w.substr(0,w.length-1)) / 100.0) * innerWidth;
@@ -213,7 +213,7 @@ The example shows four objects, a circle, a rectangle, and two arbitrary shapes.
 
         return sCTM
     }
-    
+
 
 ]]></script>
 
@@ -232,7 +232,7 @@ The example shows four objects, a circle, a rectangle, and two arbitrary shapes.
     </g>
 </g>
 
-    <!-- Following feed icon is from Marcus Campbell.  
+    <!-- Following feed icon is from Marcus Campbell.
          See http://www.tecknik.net/poke/post.php/118 -->
   <defs>
     <linearGradient id="linearGradient3936">

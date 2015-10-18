@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>drag w viewbox coord transformation</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://localhost:8001/css/lib/normalize-2.1.2.css">
+    <style media="screen" type="text/css">
+        #container {
+            padding: 10px;
+        }
+        svg {
+            margin: 0;
+            padding: 0;
+            outline: 1px solid #999;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <svg width="100%" height="100%" viewBox="0 0 1000 500"
+            onload="init()" onmouseup="mouseUp(evt)" onmousemove="mouseMove(evt)">
+            <title>SVG Dragging</title>
+            <desc>
+                This example shows how it is possible to enable dragging of objects within SVG.
+                I use custom attributes (dragx, dragy) to sidestep having to parse transformation strings.
+            </desc>
+
+            <g id="square1" transform="translate(100,100)" dragx="100" dragy="100">
+                <rect x="0" y="0" width="100" height="100" fill="red" stroke="black"/>
+            </g>
+
+            <g id="square2" transform="translate(200,200)" dragx="200" dragy="200">
+                <rect x="0" y="0" width="100" height="100" fill="blue" stroke="black"/>
+            </g>
+
+            <text id="browser"     x="30" y="425" font-size="20" fill="black"></text>
+            <text id="user"        x="30" y="450" font-size="20" fill="black"></text>
+            <text id="mouseOffset" x="30" y="475" font-size="20" fill="black"></text>
+        </svg>
+    </div>
+    <script>
+        var svg = document.getElementsByTagName('svg')[0];
+        var draggingElement = null;
+        var mouseOffsetX = 0;
+        var mouseOffsetY = 0;
+
+        function init() {
+            var square1 = document.getElementById("square1");
+            var square2 = document.getElementById("square2");
+            if ( square1 && square2 ) {
+                square1.addEventListener("mousedown", mouseDown, false);
+                square2.addEventListener("mousedown", mouseDown, false);
+            }
+        }
+
+        function mouseDown(evt) {
+            var target = evt.currentTarget;
+            draggingElement = target;
+            draggingElement.style.cursor = "move";
+
+            if (target) {
+                var p_user = get_P_user(evt);
+                mouseOffsetX = p_user.x - parseInt(target.getAttribute("dragx"), 10);
+                mouseOffsetY = p_user.y - parseInt(target.getAttribute("dragy"), 10);
+            }
+        }
+
+        function mouseMove(evt) {
+            var p_user = get_P_user(evt);
+            var p_browser = get_P_browser(evt);
+            if (draggingElement) {
+                draggingElement.setAttribute("dragx", p_user.x-mouseOffsetX);
+                draggingElement.setAttribute("dragy", p_user.y-mouseOffsetY);
+                draggingElement.setAttribute("transform", "translate("+(p_user.x-mouseOffsetX)+","+(p_user.y-mouseOffsetY)+ ")");
+            }
+            displayCoords(p_user, p_browser);
+        }
+
+        function mouseUp(evt) {
+            if (draggingElement) draggingElement.style.cursor = "auto";
+            draggingElement = null;
+            mouseOffsetX = 0;
+            mouseOffsetY = 0;
+        }
+
+        function displayCoords(p_user, p_browser) {
+            var p_user_x = parseInt( p_user.x, 10 );
+            var p_user_y = parseInt( p_user.y, 10 );
+
+            var p_browser_x = parseInt( p_browser.x, 10 );
+            var p_browser_y = parseInt( p_browser.y, 10 );
+
+            var mouseOffset_x_int = parseInt( mouseOffsetX, 10 );
+            var mouseOffset_y_int = parseInt( mouseOffsetY, 10 );
+
+            var el_browser = document.getElementById("browser");
+            var el_user = document.getElementById("user");
+            var el_mouseOffset = document.getElementById("mouseOffset");
+            if (el_browser && el_user && el_mouseOffset) {
+                el_browser.innerHTML     = 'browser    : ('+p_browser_x+','+p_browser_y+')';
+                el_user.innerHTML        = 'user       : ('+p_user_x+','+p_user_y+')';
+                el_mouseOffset.innerHTML = 'mouseOffset: ('+mouseOffset_x_int+','+mouseOffset_y_int+')';
+            }
+        }
+
+        function get_P_user(evt) {
+            var m = getScreenCTM(svg);
+            var p_browser = svg.createSVGPoint();
+            p_browser.x = evt.clientX;
+            p_browser.y = evt.clientY;
+            var p_user = p_browser.matrixTransform(m.inverse());
+            return p_user;
+        }
+
+        function get_P_browser(evt) {
+            var p_browser = svg.createSVGPoint();
+            p_browser.x = evt.clientX;
+            p_browser.y = evt.clientY;
+            return p_browser;
+        }
+
+        // Following is from Holger Will since ASV3 and O9 do not support getScreenTCM()
+        // See http://groups.yahoo.com/group/svg-developers/message/50789
+        function getScreenCTM(doc) {
+            if (doc.getScreenCTM) {
+                return doc.getScreenCTM();
+            }
+
+            var root = doc
+            var sCTM = root.createSVGMatrix()
+
+            var tr = root.createSVGMatrix()
+            var par = root.getAttribute("preserveAspectRatio")
+            if (par == null || par == "") par = "xMidYMid meet" //setting to default value
+            parX = par.substring(0, 4) //xMin;xMid;xMax
+            parY = par.substring(4, 8) //YMin;YMid;YMax;
+            ma = par.split(" ")
+            mos = ma[1] //meet;slice
+
+            //get dimensions of the viewport
+            sCTM.a = 1
+            sCTM.d = 1
+            sCTM.e = 0
+            sCTM.f = 0
+
+
+            w = root.getAttribute("width")
+            if (w == null || w == "") w = innerWidth
+
+            h = root.getAttribute("height")
+            if (h == null || h == "") h = innerHeight
+
+            // Jeff Schiller:  Modified to account for percentages - I'm not
+            // absolutely certain this is correct but it works for 100%/100%
+            if (w.substr(w.length - 1, 1) == "%") {
+                w = (parseFloat(w.substr(0, w.length - 1)) / 100.0) * innerWidth;
+            }
+            if (h.substr(h.length - 1, 1) == "%") {
+                h = (parseFloat(h.substr(0, h.length - 1)) / 100.0) * innerHeight;
+            }
+
+            // get the ViewBox
+            vba = root.getAttribute("viewBox")
+            if (vba == null) vba = "0 0 " + w + " " + h
+            var vb = vba.split(" ") //get the viewBox into an array
+
+            //--------------------------------------------------------------------------
+            //create a matrix with current user transformation
+            tr.a = root.currentScale
+            tr.d = root.currentScale
+            tr.e = root.currentTranslate.x
+            tr.f = root.currentTranslate.y
+
+
+            //scale factors
+            sx = w / vb[2]
+            sy = h / vb[3]
+
+
+            //meetOrSlice
+            if (mos == "slice") {
+                s = (sx > sy ? sx : sy)
+            } else {
+                s = (sx < sy ? sx : sy)
+            }
+
+            //preserveAspectRatio="none"
+            if (par == "none") {
+                sCTM.a = sx //scaleX
+                sCTM.d = sy //scaleY
+                sCTM.e = -vb[0] * sx //translateX
+                sCTM.f = -vb[0] * sy //translateY
+                sCTM = tr.multiply(sCTM) //taking user transformations into acount
+
+                return sCTM
+            }
+
+
+            sCTM.a = s //scaleX
+            sCTM.d = s //scaleY
+                //-------------------------------------------------------
+            switch (parX) {
+                case "xMid":
+                    sCTM.e = ((w - vb[2] * s) / 2) - vb[0] * s //translateX
+
+                    break;
+                case "xMin":
+                    sCTM.e = -vb[0] * s //translateX
+                    break;
+                case "xMax":
+                    sCTM.e = (w - vb[2] * s) - vb[0] * s //translateX
+                    break;
+            }
+            //------------------------------------------------------------
+            switch (parY) {
+                case "YMid":
+                    sCTM.f = (h - vb[3] * s) / 2 - vb[1] * s //translateY
+                    break;
+                case "YMin":
+                    sCTM.f = -vb[1] * s //translateY
+                    break;
+                case "YMax":
+                    sCTM.f = (h - vb[3] * s) - vb[1] * s //translateY
+                    break;
+            }
+            sCTM = tr.multiply(sCTM) //taking user transformations into acount
+
+            return sCTM
+        }
+    </script>
+
+    <!-- HTML HERE -->
+</body>
+
+</html>
