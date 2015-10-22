@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>drag w viewbox coord transformation</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://localhost:8001/css/lib/normalize-2.1.2.css">
+    <style media="screen" type="text/css">
+        * {
+            margin: 0; padding: 0;
+        }
+        #container {
+            /* margin-left: 100px; */
+            outline:1px solid red;
+            position: relative;
+        }
+        svg {
+            margin: 0;
+            padding: 0;
+            outline: 1px solid green;
+            float: left;
+        }
+        #box {
+            float: left;
+            width: 50%;
+            height: 300px;
+            outline: 1px solid blue;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id='box'>
+            <p>hover over the red box you will see svgX === clientX.  </p>
+            <p>regardless of the size of svg's viewBox</p>
+        </div>
+        <svg width="50%" height="300px" viewBox="0 0 400 400">
+            <g id="group">
+                <rect id="a" x="50" y="100" height="100" width="100" stoke-width="1" fill="red" fill-opacity="0.4" stroke="black" />
+            </g>
+        </svg>
+    </div>
+
+    <script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+    <script src="http://localhost:8001/js/lib/d3-3.4.13.js"></script>
+
+    <script>
+
+        var svg = d3.select('svg');
+        var svgNode = svg[0][0];
+        var a = svg.select('#a');
+
+        a.on('mousemove', function(e){
+            var svgP = d3.mouse(this);
+            var svgX = svgP[0];
+            console.log('  a: x: ', getClientX(svgX).x, ' svg x');
+        });
+
+        function getClientX(svgX) {
+            var m = svgNode.getScreenCTM();
+            var svgP = svgNode.createSVGPoint();
+            svgP.x = svgX;
+            var clientX = svgP.matrixTransform(m);
+            return clientX;
+        }
+
+        $('div#container').mousemove(function(e){
+            var x = event.pageX;
+            console.log('div: x: ', x, ' client x' );
+        });
+
+    </script>
+
+    <!-- HTML HERE -->
+</body>
+
+</html>
